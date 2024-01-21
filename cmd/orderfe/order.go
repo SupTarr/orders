@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+
+	"github.com/SupTarr/orders/order"
 )
 
 func init() {
