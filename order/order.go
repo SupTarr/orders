@@ -14,6 +14,10 @@ type Handler struct {
 	store   Storer
 }
 
+func NewHandler(channel string, store Storer) *Handler {
+	return &Handler{channel: channel, store: store}
+}
+
 type Context interface {
 	Order() (Order, error)
 	JSON(int, interface{})
