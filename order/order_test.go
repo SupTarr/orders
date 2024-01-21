@@ -123,11 +123,32 @@ func TestOrderWasSaved(t *testing.T) {
 	}
 
 	c := &MockContext{channel: "Online"}
-
 	handler.Order(c)
 
 	want := true
 	if want != store.wasCalled {
 		t.Error("It should store order data")
+	}
+}
+
+type MockFailStore struct{}
+
+func (m *MockFailStore) Save(Order) error {
+	return errors.New("Saving order to DB went wrong")
+}
+
+func TestOrderFailAtSave(t *testing.T) {
+	store := &MockFailStore{}
+	handler := &Handler{
+		channel: "Online",
+		store:   store,
+	}
+
+	c := &MockContext{channel: "Online"}
+	handler.Order(c)
+
+	want := http.StatusInternalServerError
+	if want != c.code {
+		t.Errorf("%d status code is expected but got %d\n", want, c.code)
 	}
 }
