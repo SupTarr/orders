@@ -78,3 +78,30 @@ func TestBadRequestOrderWentWrong(t *testing.T) {
 		t.Errorf("%d status code is expected but got %d\n", want, c.code)
 	}
 }
+
+type MockContextBadRequestWithChannel struct {
+	channel         string
+	jsonCalledCount int
+}
+
+func (c *MockContextBadRequestWithChannel) Order() (Order, error) {
+	return Order{SalesChannel: c.channel}, errors.New("Order went wrong")
+}
+
+func (c *MockContextBadRequestWithChannel) JSON(code int, v interface{}) {
+	c.jsonCalledCount++
+}
+
+func TestOnlyCalledJSONOneTime(t *testing.T) {
+	handler := &Handler{
+		channel: "Offline",
+	}
+
+	c := &MockContextBadRequestWithChannel{}
+	handler.Order(c)
+
+	want := 1
+	if want != c.jsonCalledCount {
+		t.Errorf("it should called one time but got %d times\n", c.jsonCalledCount)
+	}
+}
