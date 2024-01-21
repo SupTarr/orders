@@ -5,8 +5,13 @@ import (
 	"net/http"
 )
 
+type Storer interface {
+	Save(Order) error
+}
+
 type Handler struct {
 	channel string
+	store   Storer
 }
 
 type Context interface {
@@ -29,4 +34,6 @@ func (h *Handler) Order(c Context) {
 		})
 		return
 	}
+
+	h.store.Save(order)
 }

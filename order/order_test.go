@@ -105,3 +105,29 @@ func TestOnlyCalledJSONOneTime(t *testing.T) {
 		t.Errorf("it should called one time but got %d times\n", c.jsonCalledCount)
 	}
 }
+
+type MockStore struct {
+	wasCalled bool
+}
+
+func (m *MockStore) Save(Order) error {
+	m.wasCalled = true
+	return nil
+}
+
+func TestOrderWasSaved(t *testing.T) {
+	store := &MockStore{}
+	handler := &Handler{
+		channel: "Online",
+		store:   store,
+	}
+
+	c := &MockContext{channel: "Online"}
+
+	handler.Order(c)
+
+	want := true
+	if want != store.wasCalled {
+		t.Error("It should store order data")
+	}
+}
