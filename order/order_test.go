@@ -152,3 +152,19 @@ func TestOrderFailAtSave(t *testing.T) {
 		t.Errorf("%d status code is expected but got %d\n", want, c.code)
 	}
 }
+
+func TestOrderIsOk(t *testing.T) {
+	store := &MockStore{}
+	handler := &Handler{
+		channel: "Online",
+		store:   store,
+	}
+
+	c := &MockContext{channel: "Online"}
+	handler.Order(c)
+
+	_, ok := c.response["message"]
+	if !ok {
+		t.Error("Message key is expected")
+	}
+}
