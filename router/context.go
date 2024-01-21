@@ -11,6 +11,11 @@ type Router struct {
 	*gin.Engine
 }
 
+func NewRouter() *Router {
+	r := gin.Default()
+	return &Router{r}
+}
+
 func (r *Router) POST(path string, handler HandlerFunc) {
 	r.Engine.POST(path, func(c *gin.Context) {
 		handler(&Context{c})
