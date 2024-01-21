@@ -1,6 +1,10 @@
 package order
 
-import "testing"
+import (
+	"errors"
+	"net/http"
+	"testing"
+)
 
 type MockContext struct {
 	channel  string
@@ -46,5 +50,31 @@ func TestOnlyAcceptOfflineChannel(t *testing.T) {
 
 	if want != c.response["message"] {
 		t.Errorf("%q is expected but got %q\n", want, c.response["message"])
+	}
+}
+
+type MockContextBadRequest struct {
+	code     int
+	response map[string]string
+}
+
+func (c *MockContextBadRequest) Order() (Order, error) {
+	return Order{}, errors.New("Order went wrong")
+}
+
+func (c *MockContextBadRequest) JSON(code int, v interface{}) {
+	c.code = code
+	c.response = v.(map[string]string)
+}
+
+func TestBadRequestOrderWentWrong(t *testing.T) {
+	handler := &Handler{}
+
+	c := &MockContextBadRequest{}
+	handler.Order(c)
+
+	want := http.StatusBadRequest
+	if want != c.code {
+		t.Errorf("%d status code is expected but got %d\n", want, c.code)
 	}
 }

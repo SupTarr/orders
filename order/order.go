@@ -17,7 +17,9 @@ type Context interface {
 func (h *Handler) Order(c Context) {
 	order, err := c.Order()
 	if err != nil {
-
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
 	}
 
 	if order.SalesChannel != h.channel {
