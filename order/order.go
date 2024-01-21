@@ -20,11 +20,13 @@ func (h *Handler) Order(c Context) {
 		c.JSON(http.StatusBadRequest, map[string]string{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	if order.SalesChannel != h.channel {
 		c.JSON(http.StatusBadRequest, map[string]string{
 			"message": fmt.Sprintf("%s is not accepted", order.SalesChannel),
 		})
+		return
 	}
 }
