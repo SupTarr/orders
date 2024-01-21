@@ -39,5 +39,10 @@ func (h *Handler) Order(c Context) {
 		c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": err.Error(),
 		})
+		return
 	}
+
+	c.JSON(http.StatusOK, map[string]string{
+		"message": "successful",
+	})
 }
