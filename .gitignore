@@ -1,2 +1,5 @@
 offline.env
 online.env
+.vscode/
+.dist
+Sales_Records.csv
